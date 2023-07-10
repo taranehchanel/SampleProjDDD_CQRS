@@ -134,7 +134,7 @@ namespace Api.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        [Microsoft.AspNetCore.Mvc.HttpGet]
+        //[Microsoft.AspNetCore.Mvc.HttpGet]
 
         [Microsoft.AspNetCore.Mvc.Consumes
          (contentType: System.Net.Mime.MediaTypeNames.Application.Json)]
