@@ -2,73 +2,72 @@
 using Microsoft.Extensions.Configuration;
 
 
-namespace Persistence.CategoryProducts
+namespace Persistence.CategoryProducts;
+
+public class CategoryProductQueryRepository : object,
+Domain.Aggregates.CategoryProducts.ICategoryProductRepository
 {
-    public class CategoryProductQueryRepository : object,
-    Domain.Aggregates.CategoryProducts.ICategoryProductRepository
+    public CategoryProductQueryRepository
+        (Microsoft.Extensions.Configuration.IConfiguration configuration) : base()
     {
-        public CategoryProductQueryRepository
-            (Microsoft.Extensions.Configuration.IConfiguration configuration) : base()
+        // using Microsoft.Extensions.Configuration;
+        ConnectionString =
+            configuration.GetConnectionString(name: "DatabaseContext");
+    }
+
+    protected string? ConnectionString { get; init; }
+
+    public async System.Threading.Tasks.Task<System.Collections.Generic.IList
+        <ViewModels.CategoryProducts.CategoryProductViewModel>> GetAllAsync
+        (System.Threading.CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(value: ConnectionString))
         {
-            // using Microsoft.Extensions.Configuration;
-            ConnectionString =
-                configuration.GetConnectionString(name: "DatabaseContext");
+            throw new System.ArgumentNullException
+                (paramName: nameof(ConnectionString));
         }
 
-        protected string? ConnectionString { get; init; }
+        using var connection = new Microsoft.Data.SqlClient
+            .SqlConnection(connectionString: ConnectionString);
 
-        public async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable
-            <Domain.Aggregates.CategoryProducts.CategoryProduct>> GetAllAsync
-            (System.Threading.CancellationToken cancellationToken = default)
+        var query =
+            "SELECT * FROM CategoryProducts";
+
+        // using Dapper;
+        var result =
+            await
+            connection.QueryAsync<ViewModels.CategoryProducts.CategoryProductViewModel>(sql: query)
+            ;
+
+        return result.ToList();
+    }
+
+    public async System.Threading.Tasks.Task<Domain.Aggregates.CategoryProducts.CategoryProduct>
+        GetByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(value: ConnectionString))
         {
-            if (string.IsNullOrWhiteSpace(value: ConnectionString))
-            {
-                throw new System.ArgumentNullException
-                    (paramName: nameof(ConnectionString));
-            }
-
-            using var connection = new Microsoft.Data.SqlClient
-                .SqlConnection(connectionString: ConnectionString);
-
-            var query =
-                "SELECT * FROM CategoryProducts";
-
-            // using Dapper;
-            var result =
-                await
-                connection.QueryAsync<Domain.Aggregates.CategoryProducts.CategoryProduct>(sql: query)
-                ;
-
-            return result;
+            throw new System.ArgumentNullException
+                (paramName: nameof(ConnectionString));
         }
 
-        public async System.Threading.Tasks.Task<Domain.Aggregates.CategoryProducts.CategoryProduct>
-            GetByIdAsync(System.Guid id, System.Threading.CancellationToken cancellationToken = default)
-        {
-            if (string.IsNullOrWhiteSpace(value: ConnectionString))
-            {
-                throw new System.ArgumentNullException
-                    (paramName: nameof(ConnectionString));
-            }
+        using var connection = new Microsoft.Data.SqlClient
+            .SqlConnection(connectionString: ConnectionString);
 
-            using var connection = new Microsoft.Data.SqlClient
-                .SqlConnection(connectionString: ConnectionString);
+        var query =
+            "SELECT * FROM CategoryProducts WHERE Id = @Id";
 
-            var query =
-                "SELECT * FROM CategoryProducts WHERE Id = @Id";
+        //var parameters =
+        //	new { Id = id };
 
-            //var parameters =
-            //	new { Id = id };
+        var parameters = new { id };
 
-            var parameters = new { id };
+        // using Dapper;
+        var result =
+            await
+            connection.QueryFirstOrDefaultAsync<Domain.Aggregates.CategoryProducts.CategoryProduct>
+            (sql: query, param: parameters);
 
-            // using Dapper;
-            var result =
-                await
-                connection.QueryFirstOrDefaultAsync<Domain.Aggregates.CategoryProducts.CategoryProduct>
-                (sql: query, param: parameters);
-
-            return result;
-        }
+        return result;
     }
 }

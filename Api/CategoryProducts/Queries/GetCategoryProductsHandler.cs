@@ -36,7 +36,7 @@
 
 namespace Api.CategoryProducts.Queries;
 public class GetCategoryProductsHandler : object, MediatR.IRequestHandler<GetCategoryProductQuery,
-    System.Collections.Generic.IEnumerable<Domain.Aggregates.CategoryProducts.CategoryProduct>>
+    System.Collections.Generic.IList<ViewModels.CategoryProducts.CategoryProductViewModel>>
 {
     public GetCategoryProductsHandler(Domain.Aggregates.CategoryProducts
         .ICategoryProductRepository categoryProductQueryRepository) : base()
@@ -48,8 +48,8 @@ public class GetCategoryProductsHandler : object, MediatR.IRequestHandler<GetCat
     protected Domain.Aggregates.CategoryProducts.ICategoryProductRepository CategoryProductQueryRepository { get; init; }
 
     public async System.Threading.Tasks.Task
-        <System.Collections.Generic.IEnumerable
-        <Domain.Aggregates.CategoryProducts.CategoryProduct>> Handle(GetCategoryProductQuery request,
+        <System.Collections.Generic.IList
+        <ViewModels.CategoryProducts.CategoryProductViewModel>> Handle(GetCategoryProductQuery request,
         System.Threading.CancellationToken cancellationToken = default)
     {
         var result =

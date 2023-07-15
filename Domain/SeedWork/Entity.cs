@@ -20,7 +20,7 @@
                 return false;
             }
 
-            return leftObject.Equals(rightObject);
+            return leftObject.Equals(anotherObject: rightObject);
         }
         public static bool operator !=(Entity leftObject, Entity rightObject)
         {

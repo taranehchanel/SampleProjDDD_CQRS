@@ -131,28 +131,41 @@ namespace Api.Controllers
 
         #region GetByDapperQueryAsync
         /// <summary>
-        /// 
+        /// temp with this form and method tested and works --> OK
         /// </summary>
         /// <returns></returns>
+        /// 
         //[Microsoft.AspNetCore.Mvc.HttpGet]
 
-        [Microsoft.AspNetCore.Mvc.Consumes
-         (contentType: System.Net.Mime.MediaTypeNames.Application.Json)]
+        //[Microsoft.AspNetCore.Mvc.Consumes
+        // (contentType: System.Net.Mime.MediaTypeNames.Application.Json)]
 
-        [Microsoft.AspNetCore.Mvc.Produces
-         (contentType: System.Net.Mime.MediaTypeNames.Application.Json)]
+        //[Microsoft.AspNetCore.Mvc.Produces
+        // (contentType: System.Net.Mime.MediaTypeNames.Application.Json)]
+
+        //[Microsoft.AspNetCore.Mvc.ProducesResponseType
+        // (type: typeof(System.Collections.Generic.IEnumerable
+        // <ViewModels.CategoryProducts.CategoryProductViewModel>),
+        // statusCode: Microsoft.AspNetCore.Http.StatusCodes.Status200OK)]
+
+        //[Microsoft.AspNetCore.Mvc.ProducesResponseType
+        // (statusCode: Microsoft.AspNetCore.Http.StatusCodes.Status500InternalServerError)]
+
+        
+        [Microsoft.AspNetCore.Mvc.HttpGet("/GetByDapperQueryAsync")]
 
         [Microsoft.AspNetCore.Mvc.ProducesResponseType
-         (type: typeof(System.Collections.Generic.IEnumerable
-         <Domain.Aggregates.CategoryProducts.CategoryProduct>),
-         statusCode: Microsoft.AspNetCore.Http.StatusCodes.Status200OK)]
-
-        [Microsoft.AspNetCore.Mvc.ProducesResponseType
-         (statusCode: Microsoft.AspNetCore.Http.StatusCodes.Status500InternalServerError)]
-
-        public async System.Threading.Tasks.Task
-         <Microsoft.AspNetCore.Mvc.IActionResult>
-            GetByDapperQueryAsync()
+            (type: typeof(Dtat.Results.Result
+                <System.Collections.Generic.IList
+                <ViewModels.CategoryProducts.CategoryProductViewModel>>),
+            statusCode: Microsoft.AspNetCore.Http.StatusCodes.Status200OK)]
+        public
+            async
+            System.Threading.Tasks.Task
+            <Dtat.Results.Result
+                <System.Collections.Generic.IList
+                <ViewModels.CategoryProducts.CategoryProductViewModel>>>
+        GetByDapperQueryAsync()
         {
 
             var request = new Api.CategoryProducts.Queries
@@ -163,7 +176,35 @@ namespace Api.Controllers
                 await
                 Mediator.Send(request: request);
 
-            return Ok(value: result);
+            var totalResult = new FluentResults.Result
+                   <System.Collections.Generic.IList
+                   <ViewModels.CategoryProducts.CategoryProductViewModel>>();
+
+
+            try
+            {
+                //var value =
+                //    result
+                //    .Select(current => new ViewModels.CategoryProducts.CategoryProductViewModel
+                //    {
+                //        Id = current.Id,
+                //        Name = current.Name,
+                //    })
+                //    .ToList()
+                //    ;
+
+                totalResult.WithValue(value: result);
+            }
+            catch //(System.Exception ex)
+            {
+                // Log Error!
+
+                totalResult.WithError
+                    (errorMessage: Resources.Messages.Errors.UnexpectedError);
+            }
+
+            return totalResult.ConvertToDtatResult();
+            //return Ok(value: result);
 
         }
         #endregion GetByDapperQueryAsync
