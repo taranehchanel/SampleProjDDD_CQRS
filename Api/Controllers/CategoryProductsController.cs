@@ -151,7 +151,7 @@ namespace Api.Controllers
         //[Microsoft.AspNetCore.Mvc.ProducesResponseType
         // (statusCode: Microsoft.AspNetCore.Http.StatusCodes.Status500InternalServerError)]
 
-        
+
         [Microsoft.AspNetCore.Mvc.HttpGet("/GetByDapperQueryAsync")]
 
         [Microsoft.AspNetCore.Mvc.ProducesResponseType
@@ -183,16 +183,6 @@ namespace Api.Controllers
 
             try
             {
-                //var value =
-                //    result
-                //    .Select(current => new ViewModels.CategoryProducts.CategoryProductViewModel
-                //    {
-                //        Id = current.Id,
-                //        Name = current.Name,
-                //    })
-                //    .ToList()
-                //    ;
-
                 totalResult.WithValue(value: result);
             }
             catch //(System.Exception ex)
